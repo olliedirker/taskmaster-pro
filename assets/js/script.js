@@ -95,7 +95,7 @@ $(".list-group").on("click", "p", function () {
   $(this).replaceWith(textInput);
 
   //auto focus new element
-  textInput.trigger("focus")
+  textInput.trigger("focus");
 });
 //editable feild was un-focused
 $(".list-group").on("blur", "textarea", function () {
@@ -107,14 +107,14 @@ $(".list-group").on("blur", "textarea", function () {
   var status = $(this)
     .closest("list-group")
     .attr("id")
-    .replace("list-", "");
+  replace("list-", "");
   //get the tasks position in the list of other li elements
   var index = $(this)
     .closest(".list-group-item")
     .index();
   //update task in array and resave to local storage
-  tasks[status][index].text = text
-  saveTasks()
+  tasks[status][index].text = text;
+  saveTasks();
 
   //recreate p element
   var taskP = $("<p>")
@@ -180,6 +180,71 @@ $("#remove-tasks").on("click", function () {
   saveTasks();
 });
 
+$(".card .list-group").sortable({
+  connectWith: $(".card .list-group"),
+  scroll: false,
+  tolerance: "pointer",
+  helper: "Clone",
+  activate: function (event) {
+    console.log("activate", this);
+  },
+  deactivate: function (event) {
+    console.log("deactivate", this);
+  },
+  over: function (event) {
+    console.log("over", event.target);
+  },
+  out: function (event) {
+    console.log("out", event.target);
+  },
+  update: function (event) {
+
+    var tempArr = [];
+    //looop over current set of children in sortable list
+    $(this).children().each(function () {
+      var text = $(this)
+        .find("p")
+        .text()
+        .trim();
+
+      var date = $(this)
+        .find("span")
+        .text()
+        .trim();
+
+      //add task data to the temp array as an object
+      tempArr.push({
+        text: text,
+        date: date
+      });
+
+      console.log(tempArr);
+    });
+    //trim down lists ID to match object property
+    var arrName = $(this)
+      .attr("id")
+      .replace("list-", "");
+    //update array on tasks object
+    tasks[arrName] = tempArr;
+    saveTasks();
+  }
+});
+
+$("#trash").droppable({
+  accept:".card .list-group-item",
+  tolerance: "touch",
+  drop: function(event, ui){
+    ui.draggable.remove();
+    console('drop');
+  },
+  over: function(event, ui){
+    console.log('over');
+  },
+  out: function(event, ui){
+    console.log("out");
+    
+  }
+});
 // load tasks for the first time
 loadTasks();
 
