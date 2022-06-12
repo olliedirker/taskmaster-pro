@@ -49,17 +49,10 @@ var saveTasks = function() {
 var auditTask = function(taskEl) {
 
   // get date from task element
-  var date = $(taskEl)
-    .find("span")
-    .text()
-    .trim();
-
-  console.log(date);
+  var date = $(taskEl).find("span").text().trim();
 
   // convert to moment object at 5:00pm
   var time = moment(date, "L").set("hour", 17);
-
-  console.log(time);
 
   // remove any old classes from element
   $(taskEl).removeClass("list-group-item-warning list-group-item-danger");
@@ -74,7 +67,7 @@ var auditTask = function(taskEl) {
 };
 
 // enable draggable/sortable feature on list-group elements
-$(".card .list-group").sortable({
+$(".card .list-group").sortable({  
   // enable dragging across lists
   connectWith: $(".card .list-group"),
   scroll: false,
@@ -86,7 +79,7 @@ $(".card .list-group").sortable({
   },
   deactivate: function(event, ui) {
     $(this).addClass("dropover");
-    $(".bottom-trash").addClass("bottom-trash-drag")
+    $(".bottom-trash").removeClass("bottom-trash-drag")
   },
   over: function(event) {
     $(event.target).addClass("dropover-active");
@@ -165,7 +158,7 @@ $("#task-form-modal").on("shown.bs.modal", function() {
 });
 
 // save button in modal was clicked
-$("#task-form-modal .btn-primary").click(function() {
+$("#task-form-modal .btn-save").click(function() {
   // get form values
   var taskText = $("#modalTaskDescription").val();
   var taskDate = $("#modalDueDate").val();
@@ -255,7 +248,7 @@ $(".list-group").on("click", "span", function() {
   dateInput.trigger("focus");
 });
 
-// value of due date was changed
+// value of due date was change event handler
 $(".list-group").on("change", "input[type='text']", function() {
   var date = $(this).val();
 
@@ -277,6 +270,7 @@ $(".list-group").on("change", "input[type='text']", function() {
     .addClass("badge badge-primary badge-pill")
     .text(date);
     $(this).replaceWith(taskSpan);
+//pass tasks <li> element into auditTask() to check new due date
     auditTask($(taskSpan).closest(".list-group-item"));
 });
 
